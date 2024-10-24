@@ -1,58 +1,64 @@
+# Specify the version of the Docker Compose file format
 version: '3.8'
 
 services:
+  # Define the database service using MySQL
   db:
-    image: mysql:5.7
-    container_name: mysql
+    image: mysql:5.7  # Use the MySQL 5.7 image from Docker Hub
+    container_name: mysql  # Name the container "mysql"
     environment:
-      MYSQL_DATABASE: bookapi
-      MYSQL_USER: app
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bookapi  # Create a database named "bookapi"
+      MYSQL_USER: app  # Create a user "app"
+      MYSQL_PASSWORD: password  # Set password for the "app" user
+      MYSQL_ROOT_PASSWORD: rootpassword  # Set root password
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql  # Persist MySQL data using a named volume
     ports:
-      - "3306:3306"
+      - "3306:3306"  # Expose port 3306 for MySQL
 
+  # Define the API service using the PHP Laravel application
   api:
     build:
-      context: ./api
-    container_name: api
+      context: ./api  # Build the image using the Dockerfile in the "api" directory
+    container_name: api  # Name the container "api"
     environment:
-      DB_CONNECTION: mysql
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_DATABASE: bookapi
-      DB_USERNAME: app
-      DB_PASSWORD: password
+      DB_CONNECTION: mysql  # Set the database connection type
+      DB_HOST: db  # Set the database host to the "db" service
+      DB_PORT: 3306  # Set the database port
+      DB_DATABASE: bookapi  # Set the database name
+      DB_USERNAME: app  # Set the database username
+      DB_PASSWORD: password  # Set the database password
     volumes:
-      - ./api:/var/www
+      - ./api:/var/www  # Mount the "api" directory to the container
     ports:
-      - "8000:8000"
+      - "8000:8000"  # Expose port 8000 for the API
     depends_on:
-      - db
+      - db  # Ensure that the "db" service starts before this service
 
+  # Define the client service using the Nuxt.js application
   client:
     build:
-      context: ./client
-    container_name: client
+      context: ./client  # Build the image using the Dockerfile in the "client" directory
+    container_name: client  # Name the container "client"
     volumes:
-      - ./client:/usr/src/app
+      - ./client:/usr/src/app  # Mount the "client" directory to the container
     ports:
-      - "3000:3000"
+      - "3000:3000"  # Expose port 3000 for the client
     depends_on:
-      - api
+      - api  # Ensure that the "api" service starts before this service
 
+  # Define the Nginx service to act as a reverse proxy
   nginx:
-    image: nginx:alpine
-    container_name: nginx
+    image: nginx:alpine  # Use the lightweight Nginx image
+    container_name: nginx  # Name the container "nginx"
     ports:
-      - "80:80"
-      - "443:443"
+      - "80:80"  # Expose port 80 for HTTP
+      - "443:443"  # Expose port 443 for HTTPS
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf  # Mount the Nginx configuration file
     depends_on:
-      - client
+      - client  # Ensure that the "client" service starts before this service
 
+# Define named volumes for data persistence
 volumes:
-  db_data:
+  db_data:  # Create a volume named "db_data" to store MySQL data
