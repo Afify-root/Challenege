@@ -1,1 +1,2 @@
-![image](https://github.com/user-attachments/assets/e71c70e5-56e6-454b-9d6b-98f2c70c035e)
+- We used AWS to execute the challenge to demonstrate our flexibility in performing DevOps tasks and our skills. First, we created an EC2 instance running Ubuntu t2.micro.
+ ![1](https://github.com/user-attachments/assets/91b1c92e-d8a5-4393-a960-75b9f1ccd19c)
